@@ -19,31 +19,38 @@ const db = mysql.createConnection(
   console.log(`Connected to the courses_db database.`)
 );
 
-const questions = [ 
-
+const menu = 
     {
         type: 'list',
-        name: 'shape',
-        message: 'Select a shape from the following list.',
-        choices: ['circle', 'triangle', 'square']
-    },
+        name: 'menu',
+        message: 'What would you like to do?',
+        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Exit']
+    }
 
-]
 
 function init() {inquirer
-    .prompt(questions) 
+    .prompt(menu) 
     .then(function(data) {
-      console.log(data)
-    });}
+            if (menu.choices === 'Exit') {
+                console.log(data)
+                console.log(data)
+                console.log('\n Good Bye.')
+            } else {
+                console.log(data)
+                init()
+            }
+            
+    })
+};
   
 
 
-db.query(`DELETE FROM course_names WHERE id = ?`, 3, (err, result) => {
-    if (err) {
-      console.log(err);
-    }
-    console.log(result);
-  });
+// db.query(`DELETE FROM course_names WHERE id = ?`, 3, (err, result) => {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log(result);
+//   });
   
   // Query database
 //   db.query('SELECT * FROM course_names', function (err, results) {
