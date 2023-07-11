@@ -2,7 +2,6 @@ const express = require('express');
 const mysql = require('mysql2');
 const PORT = 3001;
 const port = process.env.PORT || 3001;
-const inquirer = require('inquirer')
 
 const app = express();
 
@@ -18,6 +17,9 @@ const db = mysql.createConnection(
   },
   console.log(`Connected to the management_db database.`)
 );
+
+
+const inquirer = require('inquirer')
 
 function init() {
     const menu = 
@@ -44,27 +46,33 @@ function init() {
             } else if (data.menu === 'Add an employee'){
                 console.log(data)
                 addEmployeeHandler()
-            } else {
-                console.log(data)
-                init()
+            } else if (data.menu === 'View all departments'){
+                db.query('SELECT * FROM departments;', function (err, results, fields) {
+                    console.table(results);
+                    console.log('\n'); 
+                    init(); 
+                  });
+                 
+            } else if (data.menu === 'View all roles'){
+                db.query('SELECT roles.id, roles.job_title, roles.salary, departments.department_name FROM roles LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results, fields) {
+                    console.table(results);
+                    console.log('\n'); 
+                    init(); 
+                  });
+            } else if (data.menu === 'View all employees'){
+                db.query('SELECT employees.id, employees.first_name, employees.last_name, roles.job_title, roles.salary, departments.department_name FROM employees LEFT JOIN roles ON employees.job_title_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results, fields) {
+                    console.table(results);
+                    console.log('\n'); 
+                    init(); 
+                  });
             }
+            
+          
+            
             
     })
 };
   
-
-
-// db.query(`DELETE FROM course_names WHERE id = ?`, 3, (err, result) => {
-//     if (err) {
-//       console.log(err);
-//     }
-//     console.log(result);
-//   });
-  
-  // Query database
-//   db.query('SELECT * FROM course_names', function (err, results) {
-//     console.log(results);
-//   });
   
   // Default response for any other request (Not Found)
   app.use((req, res) => {
@@ -77,12 +85,6 @@ function init() {
 
 function addDepartmentHandler(){
     const addDepartmentQuestions = [
-        {
-            type: 'input',
-            name: 'departmentID',
-            message: 'Please enter a new 3-digit ID number for the new department'
-        },
-
         {
             type: 'input',
             name: 'departmentName',
@@ -100,12 +102,6 @@ function addDepartmentHandler(){
 
 function addRoleHandler(){
     const addRoleQuestions = [
-        {
-            type: 'input',
-            name: 'roleID',
-            message: 'Please enter a new 3-digit ID number for the new role'
-        },
-
         {
             type: 'input',
             name: 'jobTitle',
@@ -139,12 +135,6 @@ function addEmployeeHandler() {
     const addEmployeeQuestions = [
         {
             type: 'input',
-            name: 'employeeID',
-            message: 'Please enter a new 3-digit ID number for the new employee'
-        },
-
-        {
-            type: 'input',
             name: 'firstName',
             message: "Please enter the new employee's first name"
         },
@@ -157,21 +147,9 @@ function addEmployeeHandler() {
 
         {
             type: 'input', 
-            name: 'employeeDepID',
-            message: 'Please enter the ID of the department to which this new employee will belong'
-        },
-
-        {
-            type: 'input', 
             name: 'employeeRoleID',
             message: 'Please enter the ID of the job title of the position this new employee is filling'
         },
-
-        {
-            type: 'input',
-            name: 'employeeSalary',
-            message: "Please enter the salary for this new employee's position. Please only use whole numbers, and do NOT include dollar signs or commas."
-        }
     ]
 
     inquirer
