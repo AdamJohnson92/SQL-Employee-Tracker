@@ -1,18 +1,24 @@
-INSERT INTO departments (id, name)
-VALUES (001, "billing"),
-       (002, "legal"),
-       (003, "reception");
+INSERT INTO departments (department_name)
+VALUES ("accounting"),
+       ("legal"),
+       ("customer service");
 
-INSERT INTO roles (id, job_title, department_id, salary)
-VALUES (001, "accountant", 001, 90000),
-       (002, "payroll", 001, 70000),
-       (003, "lawyer", 002, 100000),
-       (004, "paralegal", 002,80000),
-       (005, "front desk attendant", 003,60000);
+INSERT INTO roles (job_title, department_id, salary)
+VALUES ("accountant", 001, 90000),
+       ("payroll", 001, 70000),
+       ("finance team lead", 001, 120000),
+       ("lawyer", 002, 100000),
+       ("paralegal", 002,80000),
+       ("legal team lead", 002, 120000),
+       ("front desk attendant", 003,60000),
+       ("customer service team lead", 003, 120000);
 
-INSERT INTO employees (id, first_name, last_name, job_title_id, department_id, salary, manager)
-VALUES (001, "John", "Johnson", 001, 001, 90000,    "Hank"),
-       (002, "Jack", "Jackson", 002, 001, 70000, "Hank"),
-       (003, "Samantha", "Samson",  003, 002, 100000, "Kelly"),
-       (004, "Michelle", "Michaelson", 004, 002, 80000, "Kelly"),
-       (005, "Robert", "Robertson", 005, 003, 60000, "Claire");
+INSERT INTO employees (first_name, last_name, job_title_id, manager_id)
+VALUES ("John", "Johnson", 001, 003),
+       ("Jack", "Jackson", 002, 003),
+       ("Hank", "Boss", 003, null),
+       ("Samantha", "Samson",  004, 006),
+       ("Michelle", "Michaelson", 005, 006),
+       ("Sarah", "Boss", 006, null),
+       ("Robert", "Robertson", 007, 008),
+       ("Laura", "Boss", 008, null);
