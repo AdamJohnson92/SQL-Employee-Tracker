@@ -96,13 +96,14 @@ function addDepartmentHandler() {
         .then(function (data) {
             let departmentInsertStr = `INSERT INTO departments (department_name)
         VALUES ("${data.departmentName}");`;
-            db.query(departmentInsertStr, function (err, results) { console.log(`New Department, ${data.departmentName}, Added.`) 
-            db.query('SELECT * FROM departments;', function (err, results) {
-                console.table(results);
-                console.log('\n');
-                init();
+            db.query(departmentInsertStr, function (err, results) {
+                console.log(`New department, ${data.departmentName}, added.`)
+                db.query('SELECT * FROM departments;', function (err, results) {
+                    console.table(results);
+                    console.log('\n');
+                    init();
+                });
             });
-        });
         });
 };
 
@@ -133,13 +134,14 @@ function addRoleHandler() {
         .then(function (data) {
             let roleInsertStr = `INSERT INTO roles (job_title, department_id, salary)
         VALUES ("${data.jobTitle}", ${data.roleDepID}, ${data.roleSalary});`;
-        db.query(roleInsertStr, function (err, results) { console.log(`New role, ${data.jobTitle}, Added.`) 
-            db.query('SELECT roles.id, roles.job_title, roles.salary, departments.department_name FROM roles LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results) {
-                console.table(results);
-                console.log('\n');
-                init();
+            db.query(roleInsertStr, function (err, results) {
+                console.log(`New role, ${data.jobTitle}, added.`)
+                db.query('SELECT roles.id, roles.job_title, roles.salary, departments.department_name FROM roles LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results) {
+                    console.table(results);
+                    console.log('\n');
+                    init();
+                });
             });
-        });
         });
 };
 
@@ -163,11 +165,27 @@ function addEmployeeHandler() {
             name: 'employeeRoleID',
             message: 'Please enter the ID of the job title of the position this new employee is filling'
         },
+
+        {
+            type: 'input',
+            name: 'employeeManagerID',
+            message: 'Please enter the ID of the manager for this department'
+        }
     ]
 
     inquirer
         .prompt(addEmployeeQuestions)
         .then(function (data) {
+            let employeeInsertStr = `INSERT INTO employees (first_name, last_name, job_title_id, manager_id)
+        VALUES ("${data.firstName}", "${data.lastName}", ${data.employeeRoleID}, ${data.employeeManagerID});`;
+            db.query(employeeInsertStr, function (err, results) {
+                console.log(`New employee, ${data.firstName} ${data.lastName}, added.`)
+                db.query('SELECT employees.id, employees.first_name, employees.last_name, roles.job_title, roles.salary, departments.department_name FROM employees LEFT JOIN roles ON employees.job_title_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results) {
+                    console.table(results);
+                    console.log('\n');
+                    init();
+                });
+            });
             console.log(data)
             init()
         })
