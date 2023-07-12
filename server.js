@@ -9,20 +9,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 const db = mysql.createConnection(
-  {
-    host: 'localhost',
-    user: 'root',
-    password: 'MakiTheMenace1734!',
-    database: 'management_db'
-  },
-  console.log(`Connected to the management_db database.`)
+    {
+        host: 'localhost',
+        user: 'root',
+        password: 'MakiTheMenace1734!',
+        database: 'management_db'
+    },
+    console.log(`Connected to the management_db database.`)
 );
 
 
 const inquirer = require('inquirer')
 
 function init() {
-    const menu = 
+    const menu =
     {
         type: 'list',
         name: 'menu',
@@ -32,58 +32,57 @@ function init() {
 
 
     inquirer
-    .prompt(menu) 
-    .then(function(data) {
+        .prompt(menu)
+        .then(function (data) {
             if (data.menu === 'Exit') {
-                console.log(data)
                 console.log('\n Good Bye.')
-            } else if (data.menu === 'Add a department'){
+            } else if (data.menu === 'Add a department') {
                 console.log(data)
                 addDepartmentHandler()
-            } else if (data.menu === 'Add a role'){
+            } else if (data.menu === 'Add a role') {
                 console.log(data)
                 addRoleHandler()
-            } else if (data.menu === 'Add an employee'){
+            } else if (data.menu === 'Add an employee') {
                 console.log(data)
                 addEmployeeHandler()
-            } else if (data.menu === 'View all departments'){
-                db.query('SELECT * FROM departments;', function (err, results, fields) {
+            } else if (data.menu === 'View all departments') {
+                db.query('SELECT * FROM departments;', function (err, results) {
                     console.table(results);
-                    console.log('\n'); 
-                    init(); 
-                  });
-                 
-            } else if (data.menu === 'View all roles'){
-                db.query('SELECT roles.id, roles.job_title, roles.salary, departments.department_name FROM roles LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results, fields) {
+                    console.log('\n');
+                    init();
+                });
+
+            } else if (data.menu === 'View all roles') {
+                db.query('SELECT roles.id, roles.job_title, roles.salary, departments.department_name FROM roles LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results) {
                     console.table(results);
-                    console.log('\n'); 
-                    init(); 
-                  });
-            } else if (data.menu === 'View all employees'){
-                db.query('SELECT employees.id, employees.first_name, employees.last_name, roles.job_title, roles.salary, departments.department_name FROM employees LEFT JOIN roles ON employees.job_title_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results, fields) {
+                    console.log('\n');
+                    init();
+                });
+            } else if (data.menu === 'View all employees') {
+                db.query('SELECT employees.id, employees.first_name, employees.last_name, roles.job_title, roles.salary, departments.department_name FROM employees LEFT JOIN roles ON employees.job_title_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results) {
                     console.table(results);
-                    console.log('\n'); 
-                    init(); 
-                  });
+                    console.log('\n');
+                    init();
+                });
             }
-            
-          
-            
-            
-    })
+
+
+
+
+        })
 };
-  
-  
-  // Default response for any other request (Not Found)
-  app.use((req, res) => {
+
+
+// Default response for any other request (Not Found)
+app.use((req, res) => {
     res.status(404).end();
-  });
-  
+});
+
 //   app.listen(port, () => {
 //     console.log(`Server running on port ${port}`);
 //   });  
 
-function addDepartmentHandler(){
+function addDepartmentHandler() {
     const addDepartmentQuestions = [
         {
             type: 'input',
@@ -93,14 +92,21 @@ function addDepartmentHandler(){
     ]
 
     inquirer
-    .prompt(addDepartmentQuestions) 
-    .then(function(data) {
-        console.log(data)
-        init()
-    })
+        .prompt(addDepartmentQuestions)
+        .then(function (data) {
+            let departmentInsertStr = `INSERT INTO departments (department_name)
+        VALUES ("${data.departmentName}");`;
+            db.query(departmentInsertStr, function (err, results) { console.log(`New Department, ${data.departmentName}, Added.`) 
+            db.query('SELECT * FROM departments;', function (err, results) {
+                console.table(results);
+                console.log('\n');
+                init();
+            });
+        });
+        });
 };
 
-function addRoleHandler(){
+function addRoleHandler() {
     const addRoleQuestions = [
         {
             type: 'input',
@@ -109,7 +115,7 @@ function addRoleHandler(){
         },
 
         {
-            type: 'input', 
+            type: 'input',
             name: 'roleDepID',
             message: 'Please enter the ID of the department to which this new role will belong'
         },
@@ -123,11 +129,18 @@ function addRoleHandler(){
     ]
 
     inquirer
-    .prompt(addRoleQuestions) 
-    .then(function(data) {
-        console.log(data)
-        init()
-    })
+        .prompt(addRoleQuestions)
+        .then(function (data) {
+            let roleInsertStr = `INSERT INTO roles (job_title, department_id, salary)
+        VALUES ("${data.jobTitle}", ${data.roleDepID}, ${data.roleSalary});`;
+        db.query(roleInsertStr, function (err, results) { console.log(`New role, ${data.jobTitle}, Added.`) 
+            db.query('SELECT roles.id, roles.job_title, roles.salary, departments.department_name FROM roles LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results) {
+                console.table(results);
+                console.log('\n');
+                init();
+            });
+        });
+        });
 };
 
 
@@ -146,18 +159,18 @@ function addEmployeeHandler() {
         },
 
         {
-            type: 'input', 
+            type: 'input',
             name: 'employeeRoleID',
             message: 'Please enter the ID of the job title of the position this new employee is filling'
         },
     ]
 
     inquirer
-    .prompt(addEmployeeQuestions) 
-    .then(function(data) {
-        console.log(data)
-        init()
-    })
+        .prompt(addEmployeeQuestions)
+        .then(function (data) {
+            console.log(data)
+            init()
+        })
 };
 
 init();
