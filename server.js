@@ -62,6 +62,12 @@ function init() {
                     console.log('\n');
                     init();
                 });
+            } else if (data.menu === 'Update an employee role') {
+                db.query('SELECT employees.id, employees.first_name, employees.last_name FROM employees', function (err, results) {
+                    updateEmployeeHandler(results)
+                    console.log(results);
+                    console.log('\n');
+                });
             }
         })
 };
@@ -182,5 +188,30 @@ function addEmployeeHandler() {
             init()
         })
 };
+
+ function updateEmployeeHandler(employeeList) {
+    //Declare variable for new array
+    //CREATE FOR LOOP
+    //
+
+    const testArray = [{name: "Adam", value:1}, {name: "John", value:2}]
+    const chooseEmployee =
+    {
+        type: 'list',
+        name: 'chooseEmployee',
+        message: 'Which employee would you like to edit?',
+        choices: testArray
+    }
+
+    inquirer
+        .prompt(chooseEmployee)
+        .then(function (data) {
+
+            if (data.menu === 'Back to Main Menu') {
+                init()
+            }
+        })
+ }
+
 
 init();
