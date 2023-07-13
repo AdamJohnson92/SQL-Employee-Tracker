@@ -16,9 +16,9 @@ VALUES ("accountant", 001, 90000),
 INSERT INTO employees (first_name, last_name, job_title_id, manager_id)
 VALUES ("John", "Johnson", 001, 003),
        ("Jack", "Jackson", 002, 003),
-       ("Hank", "Boss", 003, null),
+       ("Hank", "Moneyboss", 003, null),
        ("Samantha", "Samson",  004, 006),
        ("Michelle", "Michaelson", 005, 006),
-       ("Sarah", "Boss", 006, null),
+       ("Sarah", "Lawboss", 006, null),
        ("Robert", "Robertson", 007, 008),
-       ("Laura", "Boss", 008, null);
+       ("Laura", "Helpboss", 008, null);

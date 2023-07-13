@@ -18,7 +18,6 @@ const db = mysql.createConnection(
     console.log(`Connected to the management_db database.`)
 );
 
-
 const inquirer = require('inquirer')
 
 function init() {
@@ -29,7 +28,6 @@ function init() {
         message: 'What would you like to do?',
         choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Exit']
     }
-
 
     inquirer
         .prompt(menu)
@@ -59,21 +57,15 @@ function init() {
                     init();
                 });
             } else if (data.menu === 'View all employees') {
-                db.query('SELECT employees.id, employees.first_name, employees.last_name, roles.job_title, roles.salary, departments.department_name FROM employees LEFT JOIN roles ON employees.job_title_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results) {
+                db.query('SELECT employees.id, employees.first_name, employees.last_name, roles.job_title, roles.salary, departments.department_name, employees.manager_id FROM employees LEFT JOIN roles ON employees.job_title_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results) {
                     console.table(results);
                     console.log('\n');
                     init();
                 });
             }
-
-
-
-
         })
 };
 
-
-// Default response for any other request (Not Found)
 app.use((req, res) => {
     res.status(404).end();
 });
