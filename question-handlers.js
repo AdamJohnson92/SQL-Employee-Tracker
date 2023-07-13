@@ -4,7 +4,7 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: 'MakiTheMenace1734!',
+        password: '<enter your password>',
         database: 'management_db'
     },
     console.log(`Connected to the management_db database.`)
@@ -179,12 +179,10 @@ function updateEmployeeHandler(employeeArray, roleArray) {
     for (let i = 0; i < employeeArray.length; i++) {
         const empObj = { name: employeeArray[i].first_name + " " + employeeArray[i].last_name, value: employeeArray[i].id }
         employeeList.push(empObj)
-        console.log(empObj)
     } 
     for (let j = 0; j < roleArray.length; j++) {
         const roleObj = { name: roleArray[j].job_title,  value: roleArray[j].id }
         roleList.push(roleObj)
-        console.log(roleObj)
     }
 
     const chooseEmployeeArr = [
@@ -206,12 +204,13 @@ function updateEmployeeHandler(employeeArray, roleArray) {
     inquirer
         .prompt(chooseEmployeeArr)
         .then(function (data) {
-            // console.log ({chooseEmployee,chooseRole})
             db.query(`UPDATE employees SET job_title_id = ? WHERE id = ?;`, [data.chooseRole, data.chooseEmployee])
-
-            if (data.menu === 'Return to Main Menu') {
-                init()
-            }
+            db.query('SELECT employees.id, employees.first_name, employees.last_name, roles.job_title, roles.salary, departments.department_name FROM employees LEFT JOIN roles ON employees.job_title_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id;', function (err, results) {
+                console.table(results);
+                console.log('\n'); 
+                init();
+            });
+          
         })
 }
 
